@@ -6,23 +6,24 @@
 
 (def click-count (r/atom 0))
 
-(defonce auth0-client
-  (auth0/Auth0Client.
-   (clj->js c/auth0)))
-
 (defonce auth0client
   (auth0/Auth0Client.
    (clj->js c/auth0)))
 
-
-(defn url-search-params []
+(defn url-search-params
+  "Parse URLSearchParams from window location."
+  []
   (-> js/window.location.href
       (str/split "?")
       (get 1)
       (js/URLSearchParams.)))
 
 (defn handle-redirect?
-  "Handle auth0 redirect?"
+  "
+  Handle auth0 redirect?
+
+  Should handle redirect if state and code query params.
+  "
   []
   (let [params (url-search-params)]
     (and
@@ -31,7 +32,9 @@
 
 (def raw_token (atom nil))
 
-(defn auth-action-to-take []
+(defn auth-action-to-take
+  "Decide whether to handle a redirect or try to initialize session silently."
+  []
   (pr "What auth action to take?")
   (if (handle-redirect?)
     :handle-redirect

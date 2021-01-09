@@ -49,11 +49,7 @@ dependencies.
  NPM package "auth0/auth0-spa-js" can be imported by the package name.
  Read more about the npm package imports from [[https://shadow-cljs.github.io/docs/UsersGuide.html#_using_npm_packages][Shadow CLJS documentation]].
 
- #+begin_src clojure
-   (ns app.hello
-     (:require [reagent.core :as r]
-               ["@auth0/auth0-spa-js" :as auth0]))
- #+end_src
+ #+include: "src/app/home.cljs" src clojurescript :lines "1-5"
 
 ** TODO Create login button component
 
