@@ -1,0 +1,151 @@
+#+SETUPFILE: https://fniessen.github.io/org-html-themes/org/theme-readtheorg.setup
+
+# Change the background of source block.
+#+HTML_HEAD: <style>pre.src{background:#343131;color:white;} </style>
+
+#+TITLE: Auth0 CLJS SPA
+#+DESCRIPTION: Basic steps to integrate "auth0-spa-js" library in a clojurescript spa.
+
+
+
+* Initial setup
+
+Create a new Clojurescript application to start with.
+
+#+BEGIN_SRC bash
+npx create-cljs-app cljs-auth0-spa
+#+END_SRC
+
+Install the following dependencies.
+
+- reagent
+- auth0-spa-js
+
+Auth0-spa-js from npm. Clojurescript packages are downloaded automatically
+on the startup if not yet downloaded, when they are listed in the dependencies
+of `shadow-cljs.edn`.
+
+#+BEGIN_SRC bash
+npm i @auth0/auth0-spa-js
+#+END_SRC
+
+#+BEGIN_SRC clojure
+  {:dependencies [[reagent "0.8.1"]]}
+#+END_SRC
+
+
+Now you are ready to start the development server by running `npm start`.
+This will run the shadow-cljs cli that takes care of installing the clojurescript
+dependencies.
+
+
+* First Iteration
+
+  Build the login flow here with reagent atoms.
+
+** TODO Import dependencies
+
+ Reagent and Re-Frame from their respective Clojure packages.
+ NPM package "auth0/auth0-spa-js" can be imported by the package name.
+ Read more about the npm package imports from [[https://shadow-cljs.github.io/docs/UsersGuide.html#_using_npm_packages][Shadow CLJS documentation]].
+
+ #+begin_src clojure
+   (ns app.hello
+     (:require [reagent.core :as r]
+               ["@auth0/auth0-spa-js" :as auth0]))
+ #+end_src
+
+** TODO Create login button component
+
+    - Create login button
+      - use alert login as a placeholder action
+    - Create home component
+    - Mount login button
+
+
+
+    #+begin_src clojure :file home.cljs
+ (defn login-button []
+    [:button
+     {:on-click #(.alert js/window "LOGIN")} "Login"])
+
+ (defn home []
+   [:<>
+    [:h1 "Auth0 SPA CLJS"]
+    [login-button]])
+
+    #+end_src
+
+    #+begin_src clojure :file core.cljs
+(ns app.core
+  "This namespace contains your application and is the entrypoint for 'yarn start'."
+  (:require [reagent.core :as r]
+            [app.home :as home]))
+
+(defn ^:dev/after-load render
+  "Render the toplevel component for this app."
+  []
+  (r/render [home/view] (.getElementById js/document "app")))
+
+(defn ^:export main
+  "Run application startup logic."
+  []
+  (render))
+
+    #+end_src
+
+** TODO Create Auth0 Client
+
+   #+begin_src clojurescript
+
+     (defonce auth0-client
+       (auth0/Auth0Client.
+        (clj->js {:client_id ""
+                  :domain ""
+                  :redirect_uri""
+                  })))
+
+   #+end_src
+
+** TODO First Login
+   #+begin_src clojure
+(defn login [] (.loginWithRedirect auth0-client))
+   #+end_src
+** TODO Handle Redirect
+
+
+   #+begin_src clojure
+
+     (defn should-handle-redirect?
+         "Check URL search parameters for code and state.
+          Auth0 returns these on redirect after successfull login."
+             [],,,)
+
+     (defn init-session []
+       (if (should-handle-redirect?)
+           (handle-redirect)
+           (init-session)))
+
+     (defn on-load-window [](init-session)
+
+      (.addEventListener js/window "load" on-load-window)
+   #+end_src
+
+
+** TODO Handle Session Initializaion
+** TODO Logout
+
+* Second Iteration
+
+  Clean up the implementation. Install reframe and devtool refrisk.
+
+** TODO Install Re-Frame and setup refrisk
+
+
+#+begin_src clojure
+     {:dependencies [[reagent "0.8.1"]
+                     ;; add re-frame
+                     [re-frame "1.1.2"]]}
+#+end_src
+
+** TODO  Migrate from reagent atoms to re-frame.

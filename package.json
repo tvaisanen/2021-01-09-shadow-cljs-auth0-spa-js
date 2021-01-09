@@ -32,6 +32,7 @@
     "zprint-clj": "~0.8.0"
   },
   "dependencies": {
+    "@auth0/auth0-spa-js": "^1.13.5",
     "create-react-class": "~15.6.3",
     "react": "~16.8.0",
     "react-dom": "~16.8.0"
